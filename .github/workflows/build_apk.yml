@@ -17,7 +17,6 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       DEPOT_TOOLS_UPDATE: 0
-      VPYTHON_BYPASS: "manually managed python not supported by chrome operations"
 
     strategy:
       fail-fast: false
@@ -76,6 +75,48 @@ jobs:
         run: |
           sudo apt-get install -y python2 python3 openjdk-11-jdk-headless libncurses5 ninja-build
           sudo ln -sf /usr/bin/python2 /usr/bin/python
+          
+          # Create system-level vpython wrapper (Python 2)
+          sudo tee /usr/bin/vpython <<'EOF'
+          #!/bin/bash
+          for arg in "$@"; do
+            if [[ "$arg" == "-vpython-tool" ]]; then
+              exit 0
+            fi
+          done
+          args=()
+          while [[ $# -gt 0 ]]; do
+            if [[ "$1" == "-vpython-spec" ]]; then
+              shift 2
+            else
+              args+=("$1")
+              shift
+            fi
+          done
+          exec python2 "${args[@]}"
+          EOF
+          sudo chmod +x /usr/bin/vpython
+          
+          # Create system-level vpython3 wrapper (Python 3)
+          sudo tee /usr/bin/vpython3 <<'EOF'
+          #!/bin/bash
+          for arg in "$@"; do
+            if [[ "$arg" == "-vpython-tool" ]]; then
+              exit 0
+            fi
+          done
+          args=()
+          while [[ $# -gt 0 ]]; do
+            if [[ "$1" == "-vpython-spec" ]]; then
+              shift 2
+            else
+              args+=("$1")
+              shift
+            fi
+          done
+          exec python3 "${args[@]}"
+          EOF
+          sudo chmod +x /usr/bin/vpython3
 
       - name: Installing system dependencies
         run: |
