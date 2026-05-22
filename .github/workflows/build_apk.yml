@@ -18,13 +18,14 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: 4
+      max-parallel: 1
+
       matrix:
-        platform: [arm, arm64, x86, x64]
+        platform: [arm64]
 
     # The GitHub Actions machines have a "slow disk", and a SSD "fast" disk.
     # However, there is not enough space to do all the processing on the SSD.
-    
+
     # We refer to the disks based on their name in /dev/disk
     # /dev/disk/azure/root-part1 is / ("slow disk")
     # /dev/disk/azure/resource-part1 is a 14 GB ephemeral SSD disk mounted in /mnt
@@ -164,10 +165,10 @@ jobs:
 
       - name: Checking available disk-space after downloading cache
         run: df -h
-        
+
       - name: Fetching number for the latest stable version of Chromium
         run: curl "https://omahaproxy.appspot.com/all" | grep -Fi "android,stable" | cut -f3 -d"," | awk '{split($0,a,"."); print "MAJOR=" a[1] "\nMINOR=" a[2] "\nBUILD=" a[3] "\nPATCH=" a[4]}' > chrome/VERSION
-        
+
       - name: Calculating cache size
         run: du -csh $HOME/cache
 
@@ -231,7 +232,7 @@ jobs:
       - name: Uploading binary objects to cache
         if: ${{ github.repository_owner == 'kiwibrowser' }}
         run: rclone copy --fast-list --transfers=32 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
-      
+
       - name: Compiling source-code (components/guest_view/renderer)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} components/guest_view/renderer
 
@@ -252,7 +253,7 @@ jobs:
       - name: Uploading binary objects to cache
         if: ${{ github.repository_owner == 'kiwibrowser' }}
         run: rclone copy --fast-list --transfers=32 $HOME/cache/ sync:kiwibrowser-ccache-${{ matrix.platform }}/
-  
+
       - name: Compiling source-code (components/version_info)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} components/version_info
 
@@ -261,7 +262,7 @@ jobs:
 
       - name: Compiling source-code (chrome/browser:resources)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser:resources
-  
+
       - name: Compiling source-code (chrome/browser/ui)
         run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome/browser/ui
 
@@ -549,9 +550,8 @@ jobs:
           asset_path: ./apk-x64/ChromePublic-DevSigned.apk
           asset_name: com.kiwibrowser.browser.classic-${{ github.run_id }}-x64-signed.apk
           asset_content_type: application/vnd.android.package-archive
-          
+
       - name: Send announcement on Discord
         if: ${{ github.repository_owner == 'kiwibrowser' }}
         run: |
           curl -H 'Content-Type: application/json' -X POST -d '{"username": "Kiwi Builder", "content": "A new build of Kiwi Browser (classic) is available: https://github.com/kiwibrowser/src/releases/tag/${{ github.run_id }}"}' ${{ secrets.DISCORD_WEBHOOK }}
-
