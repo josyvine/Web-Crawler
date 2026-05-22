@@ -200,4 +200,4 @@ jobs:
           path: ./secondary_disk/out/android_${{ matrix.platform }}/apks/
 
       - name: Listing mapping files
-        run: find ./secondary_disk/out/ -name '*.mapping'
+        run: find ./secondary_disk/out/ -name '*.mapping' 
