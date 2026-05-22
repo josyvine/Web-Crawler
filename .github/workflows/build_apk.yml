@@ -169,6 +169,9 @@ jobs:
       - name: Fetching number for the latest stable version of Chromium
         run: curl "https://omahaproxy.appspot.com/all" | grep -Fi "android,stable" | cut -f3 -d"," | awk '{split($0,a,"."); print "MAJOR=" a[1] "\nMINOR=" a[2] "\nBUILD=" a[3] "\nPATCH=" a[4]}' > chrome/VERSION
 
+      - name: Disabling traffic annotation tools hook
+        run: sed -i "s/'checkout_traffic_annotation_tools':.*/'checkout_traffic_annotation_tools': False,/g" DEPS
+
       - name: Running gclient runhooks
         run: |
           cd ../src
