@@ -8,8 +8,8 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-22.04
+    # Changed host runner to 20.04 to natively support Python 2.7 and package mappings
+    runs-on: ubuntu-20.04
     timeout-minutes: 360
 
     strategy:
@@ -68,8 +68,8 @@ jobs:
       - name: Installing Python and OpenJDK
         run: |
           sudo apt-get install -y \
-          python3 \
-          python-is-python3 \
+          python2 \
+          python-is-python2 \
           openjdk-11-jdk-headless \
           libncurses5 \
           ninja-build \
@@ -81,8 +81,8 @@ jobs:
       - name: Installing system dependencies
         run: |
           sudo bash install-build-deps.sh --no-chromeos-fonts
-          build/linux/sysroot_scripts/install-sysroot.py --arch=i386
-          build/linux/sysroot_scripts/install-sysroot.py --arch=amd64
+          python build/linux/sysroot_scripts/install-sysroot.py --arch=i386
+          python build/linux/sysroot_scripts/install-sysroot.py --arch=amd64
 
       - name: Checking disk after dependencies
         run: df -h
