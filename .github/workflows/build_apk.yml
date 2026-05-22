@@ -4,13 +4,17 @@ name: build apk
 # Controls when the action will run. Triggers the workflow on push or pull request events
 on:
   workflow_dispatch:
+    inputs:
+      prepareRelease:
+        description: 'Create a draft release in Google Play Store'     
+        required: true
+        default: 'no'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    # Changed host runner to 20.04 to natively support Python 2.7 and package mappings
-    runs-on: ubuntu-20.04
-    timeout-minutes: 360
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
@@ -33,7 +37,7 @@ jobs:
         run: sudo rm -rf /usr/share/dotnet /imagegeneration
 
       - name: Checking-out source-code in $GITHUB_WORKSPACE
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Creating secondary disk folder on /dev/disk/azure/resource-part1 (SSD)
         run: |
@@ -43,22 +47,21 @@ jobs:
       # If you want to use only the SSD, you can use:
       - name: On SSD - Creating symlink on /dev/disk/azure/root-part1 pointing to /dev/disk/azure/resource-part1
         run: |
-          sudo mkdir -p /mnt/secondary_disk
-          sudo mount --bind /extended_data /mnt/secondary_disk
+          sudo ln -s /extended_data /mnt/secondary_disk
           sudo ln -s /mnt/secondary_disk $GITHUB_WORKSPACE/
 
       # We cannot checkout outside of $GITHUB_WORKSPACE, but we want to checkout to the SSD
       # so we have a symbolic link $GITHUB_WORKSPACE/secondary_disk/ pointing to the SSD
       # and checkout the code there
       - name: Checking-out CIPD dependencies in /mnt/secondary_disk/.cipd
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           repository: kiwibrowser/dependencies
           path: ./secondary_disk/.cipd 
 
       - name: Linking .cipd in the proper path and copying .gclient and .gclient_entries
         run: |
-          ln -sf $GITHUB_WORKSPACE/./secondary_disk/.cipd ..
+          ln -s $GITHUB_WORKSPACE/./secondary_disk/.cipd ..
           cp ../.cipd/.gclient ..
           cp ../.cipd/.gclient_entries ..
 
@@ -66,26 +69,13 @@ jobs:
         run: sudo apt-get update
 
       - name: Installing Python and OpenJDK
-        run: |
-          sudo apt-get install -y \
-          python2 \
-          python-is-python2 \
-          openjdk-11-jdk-headless \
-          libncurses5 \
-          ninja-build \
-          clang \
-          lld \
-          git \
-          curl
+        run: sudo apt-get install -y python2 python-is-python2 python3 openjdk-11-jdk-headless libncurses5 ninja-build
 
       - name: Installing system dependencies
         run: |
           sudo bash install-build-deps.sh --no-chromeos-fonts
-          python build/linux/sysroot_scripts/install-sysroot.py --arch=i386
-          python build/linux/sysroot_scripts/install-sysroot.py --arch=amd64
-
-      - name: Checking disk after dependencies
-        run: df -h
+          build/linux/sysroot_scripts/install-sysroot.py --arch=i386
+          build/linux/sysroot_scripts/install-sysroot.py --arch=amd64
 
       - name: Creating output folder
         run: mkdir -p secondary_disk/out/android_${{ matrix.platform }}
@@ -96,8 +86,21 @@ jobs:
       - name: Copying args.gn to target folder
         run: cat .build/android_arm/args.gn | sed "s#target_cpu = \"arm\"#target_cpu = \"${{ matrix.platform }}\"#" | sed "s#android_default_version_name = \"Git\"#android_default_version_name = \"Git$(date '+%y%m%d')Gen${{ github.run_id }}\"#" > secondary_disk/out/android_${{ matrix.platform }}/args.gn
 
-      - name: Modifying args.gn
+      - name: Modifying args.gn (arm)
+        if: matrix.platform == 'arm'
+        run: sed -i "s#android_default_version_code = \"1\"#android_default_version_code = \"$(date '+%y%m%d')1\"#" secondary_disk/out/android_${{ matrix.platform }}/args.gn
+
+      - name: Modifying args.gn (arm64)
+        if: matrix.platform == 'arm64'
         run: sed -i "s#android_default_version_code = \"1\"#android_default_version_code = \"$(date '+%y%m%d')2\"#" secondary_disk/out/android_${{ matrix.platform }}/args.gn
+
+      - name: Modifying args.gn (x86)
+        if: matrix.platform == 'x86'
+        run: sed -i "s#android_default_version_code = \"1\"#android_default_version_code = \"$(date '+%y%m%d')3\"#" secondary_disk/out/android_${{ matrix.platform }}/args.gn
+
+      - name: Modifying args.gn (x64)
+        if: matrix.platform == 'x64'
+        run: sed -i "s#android_default_version_code = \"1\"#android_default_version_code = \"$(date '+%y%m%d')4\"#" secondary_disk/out/android_${{ matrix.platform }}/args.gn
 
       - name: Displaying args.gn
         run: cat secondary_disk/out/android_${{ matrix.platform }}/args.gn
@@ -124,21 +127,17 @@ jobs:
       - name: Checking available disk-space before build
         run: df -h
 
-      - name: Checking memory before build
-        run: free -m
-
       - name: Compiling source-code (final stage)
-        run: ninja -j2 -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_public_apk
+        run: ninja -C ./secondary_disk/out/android_${{ matrix.platform }} chrome_public_apk
 
       - name: Checking available disk-space
         run: df -h
 
       - name: Uploading APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v1
         with:
           name: apk-${{ matrix.platform }}
           path: ./secondary_disk/out/android_${{ matrix.platform }}/apks/
-          retention-days: 7
 
       - name: Listing mapping files
         run: find ./secondary_disk/out/ -name '*.mapping'
