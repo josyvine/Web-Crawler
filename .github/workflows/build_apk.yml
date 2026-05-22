@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       DEPOT_TOOLS_UPDATE: 0
+      VPYTHON_BYPASS: "manually managed python not supported by chrome operations"
 
     strategy:
       fail-fast: false
