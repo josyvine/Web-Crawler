@@ -43,6 +43,8 @@ by a child template that "extends" this file.
     {% if target_sdk_version|int > 27 or target_sdk_version == "P" %}
         <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     {% endif %}
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
@@ -1202,5 +1204,18 @@ android:value="true" />
             android:value="org.chromium.chrome.browser.media.remote.DefaultMediaRouteController"/>
 
         {% endblock %}
+
+        <!-- Custom Crawler and Monitoring Platform Services -->
+        <service
+            android:name="org.chromium.chrome.browser.monitoring.MonitoringService"
+            android:foregroundServiceType="dataSync"
+            android:exported="false" />
+
+        <receiver android:name="org.chromium.chrome.browser.monitoring.BootReceiver"
+                  android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
