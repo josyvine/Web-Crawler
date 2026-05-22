@@ -69,7 +69,9 @@ jobs:
         run: sudo apt-get update
 
       - name: Installing Python and OpenJDK
-        run: sudo apt-get install -y python2 python-is-python2 python3 openjdk-11-jdk-headless libncurses5 ninja-build
+        run: |
+          sudo apt-get install -y python2 python3 openjdk-11-jdk-headless libncurses5 ninja-build
+          sudo ln -sf /usr/bin/python2 /usr/bin/python
 
       - name: Installing system dependencies
         run: |
