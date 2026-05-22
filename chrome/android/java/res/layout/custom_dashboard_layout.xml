@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Kiwi Monitoring Platform. All rights reserved. -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Header Panel -->
+    <LinearLayout
+        android:id="@+id/dashboard_header"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="#1E1E1E"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CRAWLER ENGINE PLATFORM"
+            android:textColor="#00E5FF"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/status_indicator"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@android:color/holo_green_dark" />
+    </LinearLayout>
+
+    <!-- Main Screens Container -->
+    <FrameLayout
+        android:id="@+id/screen_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_navigation_bar"
+        android:layout_below="@+id/dashboard_header">
+
+        <!-- 1. DASHBOARD SCREEN -->
+        <ScrollView
+            android:id="@+id/screen_dashboard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SYSTEM STATUS"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14dp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Overview Stat Cards -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <!-- Stat Card Left -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="#1E1E1E"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:layout_marginRight="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total Captured"
+                            android:textColor="#888888"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:id="@+id/txt_total_urls"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#00E5FF"
+                            android:textSize="28dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Stat Card Right -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="#1E1E1E"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:layout_marginLeft="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Captured Today"
+                            android:textColor="#888888"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:id="@+id/txt_today_urls"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#00E676"
+                            android:textSize="28dp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Status Panel -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#1E1E1E"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Core Orchestration Service"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="14dp" />
+
+                    <TextView
+                        android:id="@+id/txt_service_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ACTIVE - Listening on port 8080"
+                        android:textColor="#00E676"
+                        android:textSize="12dp"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="RECENT DETECTION TELEMETRY"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14dp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Console Output Log Box -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:background="#0F0F0F"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/txt_console_output"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="monospace"
+                            android:text="[INFO] Ready. Register target domains in Schedules tab..."
+                            android:textColor="#00E676"
+                            android:textSize="11dp" />
+                    </ScrollView>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- 2. DOMAINS SCREEN -->
+        <LinearLayout
+            android:id="@+id/screen_domains"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="REGISTERED TARGETS"
+                android:textColor="#FFFFFF"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <ListView
+                android:id="@+id/list_domains"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#252525"
+                android:dividerHeight="1dp" />
+        </LinearLayout>
+
+        <!-- 3. LIVE FEED SCREEN -->
+        <LinearLayout
+            android:id="@+id/screen_live_feed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="URL TELEMETRY FEED"
+                android:textColor="#FFFFFF"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Search box -->
+            <EditText
+                android:id="@+id/edit_search_urls"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#1E1E1E"
+                android:hint="Search captured links..."
+                android:textColorHint="#666666"
+                android:textColor="#FFFFFF"
+                android:paddingLeft="12dp"
+                android:textSize="14dp"
+                android:layout_marginBottom="12dp" />
+
+            <ListView
+                android:id="@+id/list_captured_urls"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#252525"
+                android:dividerHeight="1dp" />
+        </LinearLayout>
+
+        <!-- 4. SCHEDULES SCREEN -->
+        <ScrollView
+            android:id="@+id/screen_schedules"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CONSTRUCT MONITORING SCHEDULE"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Domain Name"
+                    android:textColor="#888888"
+                    android:textSize="12dp"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/edit_domain_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="#1E1E1E"
+                    android:hint="e.g. bbc.com"
+                    android:textColorHint="#666666"
+                    android:textColor="#FFFFFF"
+                    android:paddingLeft="12dp"
+                    android:textSize="14dp"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Scan Interval (Minutes)"
+                    android:textColor="#888888"
+                    android:textSize="12dp"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/edit_scan_interval"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="#1E1E1E"
+                    android:hint="e.g. 5"
+                    android:textColorHint="#666666"
+                    android:textColor="#FFFFFF"
+                    android:paddingLeft="12dp"
+                    android:textSize="14dp"
+                    android:inputType="number"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start Point Offset (Hours from now)"
+                    android:textColor="#888888"
+                    android:textSize="12dp"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/edit_start_offset"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="#1E1E1E"
+                    android:hint="e.g. -48 (Past range) or 0 (Now)"
+                    android:textColorHint="#666666"
+                    android:textColor="#FFFFFF"
+                    android:paddingLeft="12dp"
+                    android:textSize="14dp"
+                    android:inputType="numberSigned"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Expiration Offset (Hours from now)"
+                    android:textColor="#888888"
+                    android:textSize="12dp"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/edit_end_offset"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="#1E1E1E"
+                    android:hint="e.g. 24 (Expires tomorrow)"
+                    android:textColorHint="#666666"
+                    android:textColor="#FFFFFF"
+                    android:paddingLeft="12dp"
+                    android:textSize="14dp"
+                    android:inputType="numberSigned"
+                    android:layout_marginBottom="24dp" />
+
+                <Button
+                    android:id="@+id/btn_create_schedule"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="#29B6F6"
+                    android:text="INITIALIZE TIMELINE SCAN"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- 5. SETTINGS SCREEN -->
+        <ScrollView
+            android:id="@+id/screen_settings"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ENGINE SETTINGS"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Battery Alert Box -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#2C1A1D"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="IMPORTANT: System Process Optimizations"
+                        android:textColor="#FF8A80"
+                        android:textStyle="bold"
+                        android:textSize="13dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Android low-power battery saving routines aggressively freeze long-running browser processes. To guarantee unthrottled crawling intervals, please set Battery Saver options for this application to UNRESTRICTED inside device system settings."
+                        android:textColor="#FFCDD2"
+                        android:textSize="12dp"
+                        android:layout_marginTop="6dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SYSTEM TOOLS"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14dp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <Button
+                    android:id="@+id/btn_clear_db"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#D32F2F"
+                    android:text="PURGE COLLECTED DATABASES"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="16dp" />
+
+                <Button
+                    android:id="@+id/btn_trigger_diagnostics"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="#388E3C"
+                    android:text="EXECUTE ENGINE DIAGNOSTICS"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="16dp" />
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
+        android:id="@+id/bottom_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="#1E1E1E"
+        android:orientation="horizontal">
+
+        <!-- Nav Button: Dashboard -->
+        <LinearLayout
+            android:id="@+id/btn_nav_dashboard"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_nav_dashboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dashboard"
+                android:textColor="#00E5FF"
+                android:textSize="11dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Nav Button: Domains -->
+        <LinearLayout
+            android:id="@+id/btn_nav_domains"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_nav_domains"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Domains"
+                android:textColor="#888888"
+                android:textSize="11dp" />
+        </LinearLayout>
+
+        <!-- Nav Button: Live Feed -->
+        <LinearLayout
+            android:id="@+id/btn_nav_live_feed"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_nav_live_feed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Feed"
+                android:textColor="#888888"
+                android:textSize="11dp" />
+        </LinearLayout>
+
+        <!-- Nav Button: Schedules -->
+        <LinearLayout
+            android:id="@+id/btn_nav_schedules"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_nav_schedules"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Schedules"
+                android:textColor="#888888"
+                android:textSize="11dp" />
+        </LinearLayout>
+
+        <!-- Nav Button: Settings -->
+        <LinearLayout
+            android:id="@+id/btn_nav_settings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_nav_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Settings"
+                android:textColor="#888888"
+                android:textSize="11dp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
