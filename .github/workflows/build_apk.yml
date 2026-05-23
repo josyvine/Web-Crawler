@@ -10,13 +10,14 @@ on:
         required: true
         default: 'no'
 
+env:
+  DEPOT_TOOLS_UPDATE: 0
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-22.04
-    env:
-      DEPOT_TOOLS_UPDATE: 0
 
     strategy:
       fail-fast: false
@@ -77,45 +78,53 @@ jobs:
           sudo ln -sf /usr/bin/python2 /usr/bin/python
           
           # Create system-level vpython wrapper (Python 2)
-          sudo tee /usr/bin/vpython <<'EOF'
-          #!/bin/bash
-          for arg in "$@"; do
-            if [[ "$arg" == "-vpython-tool" ]]; then
-              exit 0
-            fi
-          done
-          args=()
-          while [[ $# -gt 0 ]]; do
-            if [[ "$1" == "-vpython-spec" ]]; then
-              shift 2
-            else
-              args+=("$1")
-              shift
-            fi
-          done
-          exec python2 "${args[@]}"
-          EOF
+          sudo python3 -c '
+          import textwrap
+          with open("/usr/bin/vpython", "w") as f:
+              f.write(textwrap.dedent("""\
+                  #!/bin/bash
+                  for arg in "$@"; do
+                    if [[ "$arg" == "-vpython-tool" ]]; then
+                      exit 0
+                    fi
+                  done
+                  args=()
+                  while [[ $# -gt 0 ]]; do
+                    if [[ "$1" == "-vpython-spec" ]]; then
+                      shift 2
+                    else
+                      args+=("$1")
+                      shift
+                    fi
+                  done
+                  exec python2 "${args[@]}"
+              """))
+          '
           sudo chmod +x /usr/bin/vpython
           
           # Create system-level vpython3 wrapper (Python 3)
-          sudo tee /usr/bin/vpython3 <<'EOF'
-          #!/bin/bash
-          for arg in "$@"; do
-            if [[ "$arg" == "-vpython-tool" ]]; then
-              exit 0
-            fi
-          done
-          args=()
-          while [[ $# -gt 0 ]]; do
-            if [[ "$1" == "-vpython-spec" ]]; then
-              shift 2
-            else
-              args+=("$1")
-              shift
-            fi
-          done
-          exec python3 "${args[@]}"
-          EOF
+          sudo python3 -c '
+          import textwrap
+          with open("/usr/bin/vpython3", "w") as f:
+              f.write(textwrap.dedent("""\
+                  #!/bin/bash
+                  for arg in "$@"; do
+                    if [[ "$arg" == "-vpython-tool" ]]; then
+                      exit 0
+                    fi
+                  done
+                  args=()
+                  while [[ $# -gt 0 ]]; do
+                    if [[ "$1" == "-vpython-spec" ]]; then
+                      shift 2
+                    else
+                      args+=("$1")
+                      shift
+                    fi
+                  done
+                  exec python3 "${args[@]}"
+              """))
+          '
           sudo chmod +x /usr/bin/vpython3
 
       - name: Installing system dependencies
@@ -170,7 +179,8 @@ jobs:
         run: curl "https://omahaproxy.appspot.com/all" | grep -Fi "android,stable" | cut -f3 -d"," | awk '{split($0,a,"."); print "MAJOR=" a[1] "\nMINOR=" a[2] "\nBUILD=" a[3] "\nPATCH=" a[4]}' > chrome/VERSION
 
       - name: Disabling traffic annotation tools hook
-        run: sed -i "s/'checkout_traffic_annotation_tools':.*/'checkout_traffic_annotation_tools': False,/g" DEPS
+        run: |
+          sed -i "s/'checkout_traffic_annotation_tools':.*/'checkout_traffic_annotation_tools': False,/g" DEPS
 
       - name: Running gclient runhooks
         run: |
@@ -200,4 +210,4 @@ jobs:
           path: ./secondary_disk/out/android_${{ matrix.platform }}/apks/
 
       - name: Listing mapping files
-        run: find ./secondary_disk/out/ -name '*.mapping' 
+        run: find ./secondary_disk/out/ -name '*.mapping'
